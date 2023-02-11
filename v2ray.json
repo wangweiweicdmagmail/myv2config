@@ -1,0 +1,144 @@
+{
+  "log": {
+    "access": "",
+    "error": "",
+    "loglevel": "warning"
+  },
+  "inbounds": [
+    {
+      "tag": "socks",
+      "port": 10808,
+      "listen": "127.0.0.1",
+      "protocol": "socks",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ],
+        "routeOnly": false
+      },
+      "settings": {
+        "auth": "noauth",
+        "udp": true,
+        "allowTransparent": false
+      }
+    },
+    {
+      "tag": "http",
+      "port": 10809,
+      "listen": "127.0.0.1",
+      "protocol": "http",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ],
+        "routeOnly": false
+      },
+      "settings": {
+        "auth": "noauth",
+        "udp": true,
+        "allowTransparent": false
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "tag": "proxy",
+      "protocol": "shadowsocks",
+      "settings": {
+        "servers": [
+          {
+            "address": "c331s2.jjvip8.com",
+            "method": "aes-256-gcm",
+            "ota": false,
+            "password": "gvsHMwMvzugZRBwz",
+            "port": 16193,
+            "level": 1
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp"
+      },
+      "mux": {
+        "enabled": false,
+        "concurrency": -1
+      }
+    },
+    {
+      "tag": "direct",
+      "protocol": "freedom",
+      "settings": {}
+    },
+    {
+      "tag": "block",
+      "protocol": "blackhole",
+      "settings": {
+        "response": {
+          "type": "http"
+        }
+      }
+    }
+  ],
+  "routing": {
+    "domainStrategy": "AsIs",
+    "rules": [
+      {
+        "type": "field",
+        "inboundTag": [
+          "api"
+        ],
+        "outboundTag": "api",
+        "enabled": true
+      },
+      {
+        "id": "5164059080507307765",
+        "type": "field",
+        "outboundTag": "direct",
+        "domain": [
+          "domain:example-example.com",
+          "domain:example-example2.com"
+        ],
+        "enabled": true
+      },
+      {
+        "id": "5496741363117778937",
+        "type": "field",
+        "outboundTag": "block",
+        "domain": [
+          "geosite:category-ads-all"
+        ],
+        "enabled": true
+      },
+      {
+        "id": "5480388400461162551",
+        "type": "field",
+        "outboundTag": "direct",
+        "domain": [
+          "geosite:cn"
+        ],
+        "enabled": true
+      },
+      {
+        "id": "4840922935612468475",
+        "type": "field",
+        "outboundTag": "direct",
+        "ip": [
+          "geoip:private",
+          "geoip:cn"
+        ],
+        "enabled": true
+      },
+      {
+        "id": "5476747130387446395",
+        "type": "field",
+        "port": "0-65535",
+        "outboundTag": "proxy",
+        "enabled": true
+      }
+    ]
+  }
+}
